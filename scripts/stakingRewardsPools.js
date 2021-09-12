@@ -12,7 +12,7 @@ async function main() {
   console.log("Ponzu deployed to: ", ponzu.address);
 
   const Rewards = await hre.ethers.getContractFactory("NyanRewards");
-  rewardsPonzuSLP = await Rewards.deploy(ponzu.address, "0x7Ca483a96078FA311333515A64dB1CA8e88af455");
+  rewardsPonzuSLP = await Rewards.deploy(ponzu.address, "0xc368C51AD7dC69aB6F7cDc5a498D18d15edaF325");
   await rewardsPonzuSLP.deployed();
   console.log("RewardsPonzuSLP deployed to: ", rewardsPonzuSLP.address);
 }
