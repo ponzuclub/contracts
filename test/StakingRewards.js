@@ -44,12 +44,18 @@ describe('StakingRewards', function() {
   it('It should allow people to claim rewards and original eth after staking eth', async function() {
     await ponzu.transfer(rewardsPonzuETH.address, ethers.utils.parseEther("10"));
     await rewardsPonzuETH.setRewardParams(ethers.utils.parseEther("10"), 86400);
-    await rewardsPonzuETH.connect(signers[1]).stake(0, { value: "1000"});
+    let initial = await ethers.provider.getBalance(signers[1].address);
+    await rewardsPonzuETH.connect(signers[1]).stake(0, { value: ethers.utils.parseEther("50") });
+
+    let newbalance = await ethers.provider.getBalance(signers[1].address); 
+    expect(newbalance.toString().substring(0,3)).to.equal("994");
+
     expect(await rewardsPonzuETH.earned(signers[1].address)).to.equal(0);
     await time.increase(86400);
-    expect(await rewardsPonzuETH.earned(signers[1].address)).to.equal("9999884259259195260");
+    expect(await rewardsPonzuETH.earned(signers[1].address)).to.equal("9999884259259195250");
     await rewardsPonzuETH.connect(signers[1]).exit()
-    expect(await ponzu.balanceOf(signers[1].address)).to.equal(ethers.BigNumber.from("19999884259259195260"));
-    expect(await ethers.provider.getBalance(signers[1].address)).to.equal("9999999576823000000000");
+    expect(await ponzu.balanceOf(signers[1].address)).to.equal(ethers.BigNumber.from("19999884259259195250"));
+    newbalance = await ethers.provider.getBalance(signers[1].address); 
+    expect(newbalance.toString().substring(0,3)).to.equal("999");
   });
 });
