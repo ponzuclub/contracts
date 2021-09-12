@@ -6,20 +6,45 @@
 const hre = require("hardhat");
 
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
+  const [owner] = await hre.ethers.getSigners();
+  const Ponzu = await hre.ethers.getContractFactory("Ponzu");
+  const ponzu = await Ponzu.deploy(owner.address);
+  await ponzu.deployed();
+  console.log("Ponzu deployed to: ", ponzu.address);
 
-  // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  // Predetermine GovernorBravoDelegator address
+  let nonce = await owner.getTransactionCount();
+  let adminAddress = hre.ethers.utils.getContractAddress({
+    from: owner.address,
+    nonce: nonce + 2
+  })
+  console.log("Delegator Address: ", adminAddress);
 
-  await greeter.deployed();
+  const Timelock = await hre.ethers.getContractFactory("Timelock");
+  timelock = await Timelock.deploy(
+    adminAddress,
+    172800 // 2 days
+  );
+  await timelock.deployed();
+  console.log("Timelock deployed to:", timelock.address);
 
-  console.log("Greeter deployed to:", greeter.address);
+  const Delegate = await hre.ethers.getContractFactory("GovernorBravoDelegate");
+  delegate = await Delegate.deploy();
+  await delegate.deployed();
+  console.log("Delegate deployed to:", delegate.address);
+
+  const Delegator = await hre.ethers.getContractFactory("GovernorBravoDelegator");
+  delegator = await Delegator.deploy(
+    timelock.address,
+    ponzu.address,
+    owner.address,
+    delegate.address,
+    43200, // min voting period, in terms of number of blocks, this is around 6 hours
+    1,  // min voting delay, in terms of number of blocks, this is around 0.4-0.5 seconds
+    hre.ethers.utils.parseEther("100000"),  // 100,000 ponzu 1% proposal threshold
+  );
+  await delegator.deployed();  
+  console.log("Delegator deployed to:", delegator.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

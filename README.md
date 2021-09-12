@@ -1,6 +1,12 @@
 # Ponzu Club
 Support projects on Arbitrum to earn ponzus.
 
+# Addresses
+Ponzu deployed to:  0x7d2D35cF256cb47b8cAa6eB4d793f1c7e2228d35
+Timelock deployed to: 0x1A5c344DB58b3d9094a1761272a27C08ba411eDa
+Delegate deployed to: 0xd4722a14d0B73edB948E9c96Fa9278d8d870C673
+Delegator deployed to: 0x0ff9eAb68d3A17258D90796d2B328008E7ac3587
+
 # Advanced Sample Hardhat Project
 
 This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
